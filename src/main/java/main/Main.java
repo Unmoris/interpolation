@@ -1,6 +1,10 @@
 package main;
 
-import main.choose.ChooseCenterM;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
+import main.charecters.Character;
 import main.choose.IChooseM;
 import main.choose.RandomInRangeChooseM;
 import main.funs.CubeXFunction;
@@ -12,12 +16,7 @@ import main.interpolation.IInterpolation;
 import main.interpolation.LagrangesInterpolation;
 import main.interpolation.NiotonInterpolation;
 import main.interpolation.StirlingInterpolation;
-import main.print.PrintConsole;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import main.print.PrintCSV;
 
 public class Main {
     public static void main(String[] args) {
@@ -29,28 +28,51 @@ public class Main {
                 new StirlingInterpolation()
         );
 
-        List<IFuncX> iFuncXList = Arrays.asList(new CubeXFunction());
+        IFuncX funcX = new CubeXFunction();
 
-        int count = 5;
-        IGenerateArrayX generateArrayX = new GenerateToTo(-5, 5, count);
+        calculateCharacters(getCalculates(funcX, new LagrangesInterpolation()), "lagr");
+        calculateCharacters(getCalculates(funcX, new NiotonInterpolation()), "niot");
+        calculateCharacters(getCalculates(funcX, new BesselInterpolation()), "bess");
+        calculateCharacters(getCalculates(funcX, new StirlingInterpolation()), "stir");
 
+
+    }
+
+    private static List<Calculate> getCalculates(IFuncX iFuncX, IInterpolation interpol) {
         List<Calculate> calculateList = new LinkedList<>();
-        for (int i = 0; i < count - 1; i++) {
-            IChooseM chooseM = new RandomInRangeChooseM(i, i + 1);
 
-            for (IFuncX func : iFuncXList) {
-                for (IInterpolation interpol : interpolationList) {
-                    calculateList.add(new Calculate(chooseM,func,generateArrayX,interpol ));
+        for (int startIndex = -50; startIndex < 0; startIndex++) {
+            for (int countIndex = 6; countIndex < 50; countIndex++) {
+
+                IGenerateArrayX generateArrayX = new GenerateToTo(startIndex, Math.abs(startIndex), countIndex);
+
+                for (int i = 0; i < countIndex - 1; i++) {
+                    IChooseM chooseM = new RandomInRangeChooseM(i, i + 1);
+                    calculateList.add(new Calculate(chooseM, iFuncX, generateArrayX, interpol));
                 }
             }
         }
+        return calculateList;
+    }
 
-        for (Calculate calculator:calculateList) {
+    private static void calculateCharacters(List<Calculate> calculateList, String nameFile) {
+        List<Character> characterList = new ArrayList<>();
+
+        for (Calculate calculator : calculateList) {
             double val = calculator.calculate();
 
-            PrintConsole.print(calculator, val);
+            Character character = new Character();
 
+            character.interpolationX = calculator.getM();
+            character.getInterpolationValue = val;
+            character.func = calculator.getFuncX().toString();
+            character.time = calculator.getDuration();
+            character.fallibility = Math.abs(val - calculator.getfX());
+            character.valueFx = calculator.getfX();
+            character.relativeError = Math.abs(val - calculator.getfX()) / val / 100;
+            characterList.add(character);
         }
 
+        PrintCSV.print(characterList, nameFile);
     }
 }

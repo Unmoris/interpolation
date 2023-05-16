@@ -48,7 +48,11 @@ public class StirlingInterpolation implements IInterpolation {
                 ++k;
                 d *= i;
                 s = (int) floor((n - i) / 2);
-                y1 += (temp1 / (2 * d)) * (delta[s][i - 1] + delta[s - 1][i - 1]);
+                try {
+                    y1 += (temp1 / (2 * d)) * (delta[s][i - 1] + delta[ s == 0 ? 0 :s - 1][i - 1]);
+                } catch (ArrayIndexOutOfBoundsException e){
+                    System.out.println();
+                }
             } else {
                 temp2 *= (pow(u, 2) -
                         pow((l - 1), 2));

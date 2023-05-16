@@ -5,4 +5,9 @@ public class CubeXFunction implements IFuncX{
     public double func(double x) {
         return Math.pow(x,2);
     }
+
+    @Override
+    public String toString() {
+        return "x^2";
+    }
 }

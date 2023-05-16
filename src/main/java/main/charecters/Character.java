@@ -3,10 +3,20 @@ package main.charecters;
 import main.Point;
 
 public class Character {
-    double time;
+    public double time;
 
-    String func;
+    public String func;
 
-    Point[] points;
+    public Point[] points;
+
+    public double valueFx;
+
+    public double interpolationX;
+
+    public double getInterpolationValue;
+
+    public double fallibility;
+
+    public double relativeError;
 
 }
