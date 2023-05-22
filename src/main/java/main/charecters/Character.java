@@ -1,13 +1,11 @@
 package main.charecters;
 
-import main.Point;
+import java.util.Map;
 
 public class Character {
     public double time;
 
-    public String func;
-
-    public Point[] points;
+    public String funcName;
 
     public double valueFx;
 
@@ -19,4 +17,9 @@ public class Character {
 
     public double relativeError;
 
+    public double deltaCenter; // delta = m - (s + f) / 2
+
+    public int countPoints;
+
+    public double lengthX;
 }

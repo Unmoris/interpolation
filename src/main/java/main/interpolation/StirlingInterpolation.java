@@ -83,4 +83,9 @@ public class StirlingInterpolation implements IInterpolation {
                 x,
                 n );
     }
+
+    @Override
+    public String toString() {
+        return "stirling";
+    }
 }

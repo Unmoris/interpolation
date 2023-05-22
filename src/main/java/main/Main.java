@@ -4,11 +4,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
 import main.charecters.Character;
 import main.choose.IChooseM;
 import main.choose.RandomInRangeChooseM;
+import main.funs.CosFunc;
 import main.funs.CubeXFunction;
+import main.funs.ExpFunc;
 import main.funs.IFuncX;
+import main.funs.SinFunc;
 import main.generatex.GenerateToTo;
 import main.generatex.IGenerateArrayX;
 import main.interpolation.BesselInterpolation;
@@ -28,21 +32,27 @@ public class Main {
                 new StirlingInterpolation()
         );
 
-        IFuncX funcX = new CubeXFunction();
+        List<IFuncX> listFunc = Arrays.asList(new CubeXFunction(), new CosFunc(), new SinFunc(), new ExpFunc());
 
-        calculateCharacters(getCalculates(funcX, new LagrangesInterpolation()), "lagr");
-        calculateCharacters(getCalculates(funcX, new NiotonInterpolation()), "niot");
-        calculateCharacters(getCalculates(funcX, new BesselInterpolation()), "bess");
-        calculateCharacters(getCalculates(funcX, new StirlingInterpolation()), "stir");
 
+        for (IFuncX func : listFunc) {
+            for (IInterpolation interpolation: interpolationList) {
+                calculateCharacters(getCalculates(func, interpolation), func.toString()+"_" + interpolation.toString());
+
+            }
+        }
+//        calculateCharacters(getCalculates(funcX, new LagrangesInterpolation()), "lagr");
+//        calculateCharacters(getCalculates(funcX, new NiotonInterpolation()), "niot");
+//        calculateCharacters(getCalculates(funcX, new BesselInterpolation()), "bess");
+//        calculateCharacters(getCalculates(funcX, new StirlingInterpolation()), "stir");
 
     }
 
     private static List<Calculate> getCalculates(IFuncX iFuncX, IInterpolation interpol) {
         List<Calculate> calculateList = new LinkedList<>();
 
-        for (int startIndex = -50; startIndex < 0; startIndex++) {
-            for (int countIndex = 6; countIndex < 50; countIndex++) {
+        for (int startIndex = -30; startIndex < 0; startIndex++) {
+            for (int countIndex = 6; countIndex < 30; countIndex++) {
 
                 IGenerateArrayX generateArrayX = new GenerateToTo(startIndex, Math.abs(startIndex), countIndex);
 
@@ -52,6 +62,7 @@ public class Main {
                 }
             }
         }
+
         return calculateList;
     }
 
@@ -65,11 +76,19 @@ public class Main {
 
             character.interpolationX = calculator.getM();
             character.getInterpolationValue = val;
-            character.func = calculator.getFuncX().toString();
+            character.funcName = calculator.getFuncX().toString();
             character.time = calculator.getDuration();
             character.fallibility = Math.abs(val - calculator.getfX());
             character.valueFx = calculator.getfX();
-            character.relativeError = Math.abs(val - calculator.getfX()) / val / 100;
+            character.relativeError = Math.abs(val - calculator.getfX() / val) / 100;
+            character.countPoints = calculator.getPoints().length;
+
+            double startPoint = calculator.getPoints()[0].getX();
+            double finishPoint = calculator.getPoints()[calculator.getPoints().length - 1].getX();
+
+            character.deltaCenter = Math.abs(calculator.getM() - (startPoint + finishPoint) / 2);
+            character.lengthX = Math.abs(finishPoint - startPoint);
+
             characterList.add(character);
         }
 

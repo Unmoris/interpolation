@@ -64,5 +64,10 @@ public class NiotonInterpolation implements IInterpolation {
 
         return calc(n, xArr, yArr, x);
     }
+
+    @Override
+    public String toString() {
+        return "nioton";
+    }
 }
 

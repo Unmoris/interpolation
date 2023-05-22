@@ -35,4 +35,9 @@ public class LagrangesInterpolation implements IInterpolation {
     public double interpolation(Point[] pointArr, double x) {
         return interpolate(pointArr, x, pointArr.length);
     }
+
+    @Override
+    public String toString() {
+        return "lagrange";
+    }
 }

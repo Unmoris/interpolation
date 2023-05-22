@@ -94,4 +94,9 @@ public class BesselInterpolation implements IInterpolation {
         }
         return sum;
     }
+
+    @Override
+    public String toString() {
+        return "bessell";
+    }
 }
