@@ -8,7 +8,8 @@ import static java.lang.Math.pow;
 public class StirlingInterpolation implements IInterpolation {
 
     static double Stirling(double x[], double fx[],
-                           double x1, int n) {
+                         double x1, int n)
+    {
         double h, a, u, y1 = 0, N1 = 1, d = 1,
                 N2 = 1, d2 = 1, temp1 = 1,
                 temp2 = 1, k = 1, l = 1, delta[][];
@@ -16,7 +17,7 @@ public class StirlingInterpolation implements IInterpolation {
         delta = new double[n][n];
         int i, j, s;
         h = x[1] - x[0];
-        s = (int) floor(n / 2);
+        s = (int)floor(n / 2);
         a = x[s];
         u = (x1 - a) / h;
 
@@ -36,36 +37,38 @@ public class StirlingInterpolation implements IInterpolation {
         // formula
         y1 = fx[s];
 
-        for (i = 1; i <= n - 1; ++i) {
+        for (i = 1; i <= n - 2; ++i) {
             if (i % 2 != 0) {
                 if (k != 2) {
                     temp1 *= (pow(u, k) -
                             pow((k - 1), 2));
-                } else {
+                }
+                else {
                     temp1 *= (pow(u, 2) -
                             pow((k - 1), 2));
                 }
                 ++k;
                 d *= i;
-                s = (int) floor((n - i) / 2);
+                s = (int)floor((n - i) / 2);
                 try {
-                    y1 += (temp1 / (2 * d)) * (delta[s][i - 1] + delta[ s == 0 ? 0 :s - 1][i - 1]);
-                } catch (ArrayIndexOutOfBoundsException e){
-                    System.out.println();
+                    y1 += (temp1 / (2 * d)) * (delta[s][i - 1] + delta[s - 1][i - 1]);
+
+                } catch (Exception e){
+                    y1 += 0;
                 }
-            } else {
+            }
+            else {
                 temp2 *= (pow(u, 2) -
                         pow((l - 1), 2));
                 ++l;
                 d *= i;
-                s = (int) floor((n - i) / 2);
+                s = (int)floor((n - i) / 2);
                 y1 += (temp2 / (d)) *
                         (delta[s][i - 1]);
             }
         }
 
-        //System.out.print(+y1);
-        return y1;
+        return (+y1);
     }
 
     @Override
@@ -79,9 +82,7 @@ public class StirlingInterpolation implements IInterpolation {
             yArr[i] = pointArr[i].getY();
 
         }
-        return Stirling(xArr, yArr,
-                x,
-                n );
+        return Stirling(xArr, yArr, x, n );
     }
 
     @Override

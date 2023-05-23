@@ -1,8 +1,9 @@
 package main.interpolation;
 
-import main.Point;
+import java.text.*;
 
-public class BesselInterpolation implements IInterpolation {
+public class BClass {
+    // calculating u mentioned in the formula
     static double ucal(double u, int n) {
         if (n == 0)
             return 1;
@@ -26,45 +27,25 @@ public class BesselInterpolation implements IInterpolation {
         return fact;
     }
 
-    @Override
-    public double interpolation(Point[] pointArr, double x) {
-        // calculating u mentioned in the formula
-
-        // Number of values given
-        int n = pointArr.length;
-        double arrX[] = new double[n];
-
-        for (int i = 0; i < n; i++) {
-            arrX[i] = pointArr[i].getX();
-        }
-
-        double[][] y = new double[n][n];
-
-        for (int i = 0; i < n; i++) {
-            y[i][0] = pointArr[i].getY();
-        }
-
-
+    public static double calculete(int n, double[][] y,double[] x){
         // Calculating the central difference table
         for (int i = 1; i < n; i++)
             for (int j = 0; j < n - i; j++)
                 y[j][i] = y[j + 1][i - 1] - y[j][i - 1];
 
+        // Displaying the central difference table
+        DecimalFormat df = new DecimalFormat("#.########");
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n - i; j++)
+                System.out.print(y[i][j] + "\t");
+            System.out.println("");
+        }
 
         // value to interpolate at
-        double value = x;
+        double value = 27.4;
 
-        int zeroY = 0;
-
-        int firstY = 0;
-        for (int i = 0; i < arrX.length; i++) {
-            if (x > arrX[i]) {
-                zeroY = i;
-                firstY = i + 1;
-            }
-        }
         // Initializing u and sum
-        double sum = (y[zeroY][0] + y[firstY][0]) / 2;
+        double sum = (y[2][0] + y[3][0]) / 2;
 
         // k is origin thats is f(0)
         int k;
@@ -73,26 +54,35 @@ public class BesselInterpolation implements IInterpolation {
         else
             k = n / 2 - 1; // origin for even
 
-        double u = (value - arrX[k]) / (arrX[1] - arrX[0]);
+        double u = (value - x[k]) / (x[1] - x[0]);
 
         // Solving using bessel's formula
         for (int i = 1; i < n; i++) {
-            double newSum;
             if ((i % 2) > 0)
-                newSum = sum + ((u - 0.5) * ucal(u, i - 1) * y[k][i]) / fact(i);
-            else {
-                newSum = sum + (ucal(u, i) *
+                sum = sum + ((u - 0.5) *
+                        ucal(u, i - 1) * y[k][i]) / fact(i);
+            else
+                sum = sum + (ucal(u, i) *
                         (y[k][i] + y[--k][i]) / (fact(i) * 2));
-            }
-
-            sum = newSum;
-
         }
+
         return sum;
     }
 
-    @Override
-    public String toString() {
-        return "bessell";
+    public static void main(String[] args) {
+        // Number of values given
+        int n = 6;
+        double x[] = {25, 26, 27, 28, 29, 30};
+
+        // y[][] is used for difference table
+        // with y[][0] used for input
+        double[][] y = new double[n][n];
+        y[0][0] = 4.000;
+        y[1][0] = 3.846;
+        y[2][0] = 3.704;
+        y[3][0] = 3.571;
+        y[4][0] = 3.448;
+        y[5][0] = 3.333;
+
     }
 }
