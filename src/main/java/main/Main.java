@@ -15,37 +15,34 @@ import main.funs.IFuncX;
 import main.funs.SinFunc;
 import main.generatex.GenerateToTo;
 import main.generatex.IGenerateArrayX;
-import main.interpolation.BesselInterpolation;
 import main.interpolation.IInterpolation;
 import main.interpolation.LagrangesInterpolation;
 import main.interpolation.NiotonInterpolation;
-import main.interpolation.StirlingInterpolation;
 import main.print.PrintCSV;
+import org.apache.commons.math3.stat.correlation.PearsonsCorrelation;
 
 public class Main {
     public static void main(String[] args) {
 
         List<IInterpolation> interpolationList = Arrays.asList(
-                new LagrangesInterpolation(),
-                new NiotonInterpolation(),
-                new BesselInterpolation(),
-                new StirlingInterpolation()
+//                new LagrangesInterpolation()
+                new NiotonInterpolation()
+//                new BesselInterpolation(),
+//                new StirlingInterpolation()
         );
 
-        List<IFuncX> listFunc = Arrays.asList(new CubeXFunction(), new CosFunc(), new SinFunc(), new ExpFunc());
+        List<IFuncX> listFunc = Arrays.asList(
+                new CubeXFunction(),
+                new CosFunc(),
+                new SinFunc(),
+                new ExpFunc());
 
 
         for (IFuncX func : listFunc) {
             for (IInterpolation interpolation: interpolationList) {
                 calculateCharacters(getCalculates(func, interpolation), func.toString()+"_" + interpolation.toString());
-
             }
         }
-//        calculateCharacters(getCalculates(funcX, new LagrangesInterpolation()), "lagr");
-//        calculateCharacters(getCalculates(funcX, new NiotonInterpolation()), "niot");
-//        calculateCharacters(getCalculates(funcX, new BesselInterpolation()), "bess");
-//        calculateCharacters(getCalculates(funcX, new StirlingInterpolation()), "stir");
-
     }
 
     private static List<Calculate> getCalculates(IFuncX iFuncX, IInterpolation interpol) {
@@ -64,6 +61,20 @@ public class Main {
         }
 
         return calculateList;
+    }
+
+    private static void corel(List<Character> characters){
+        double[] xArr = new double[characters.size()];
+        double[] yArr = new double[characters.size()];
+
+        for (int i = 0; i < characters.size(); i++) {
+            xArr[i] = characters.get(i).relativeError;
+            yArr[i] = characters.get(i).deltaCenter;
+        }
+        PearsonsCorrelation pearsonsCorrelation = new PearsonsCorrelation();
+
+        System.out.println(pearsonsCorrelation.correlation(xArr, yArr));
+
     }
 
     private static void calculateCharacters(List<Calculate> calculateList, String nameFile) {
@@ -91,7 +102,7 @@ public class Main {
 
             characterList.add(character);
         }
-
+        corel(characterList);
         PrintCSV.print(characterList, nameFile);
     }
 }
